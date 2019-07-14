@@ -50,7 +50,7 @@ X_test_indices = sentences_to_indices(X_test, word_to_index, 2000)
 X_test_padded = pad_sequences(X_test_indices, maxlen=200, truncating='post')
 pred = model.predict(X_test_padded[0:1])
 
-C = 6 
+C = 6
 y_test_oh = np.eye(C)[Y_test.reshape(-1)]
 X_test_indices = sentences_to_indices(X_test, word_to_index, maxLen)
 pred = model.predict(X_test_indices)

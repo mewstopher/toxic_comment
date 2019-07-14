@@ -34,7 +34,7 @@ def sentences_to_indices(X, word_to_index, max_len):
 
     X_indices = np.zeros([m, max_len])
     for i in range(m):
-        sentence_words = [j.lower() for j in X[i].split()]
+        sentence_words = X[i]
         j = 0
         for w in sentence_words:
             if w in word_to_index.keys():

@@ -20,9 +20,7 @@ def basic_lstm(input_shape, word_to_vec_map, word_to_index):
     X = Dropout(.5)(X)
     X = LSTM(128)(X)
     X = Dropout(.5)(X)
-    X = Dense(6)(X)
-    X = Activation('sigmoid')(X)
-
+    X = Dense(6, activation='sigmoid')(X)
     model = Model(inputs=sentence_indices, outputs=X)
 
     return model

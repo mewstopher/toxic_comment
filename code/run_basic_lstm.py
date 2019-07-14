@@ -35,3 +35,15 @@ X_train_indices = sentences_to_indices(X_train, word_to_index, maxLen)
 
 model.fit(X_train_indices, y_train, epochs = 2, batch_size = 32, shuffle=True)
 
+
+#training on entire training set takes too long for quick
+#evaluations. shorten to first 100
+X_tr2 = X_train_indices[0:100]
+y_tr2 = y_train[0:100]
+
+model.fit(X_tr2, y_tr2, epochs =1, batch_size = 50, shuffle=True)
+
+X_test_indices = sentences_to_indices(X_test, word_to_index, maxLen)
+pred = model.predict(X_test_indices[1])
+
+

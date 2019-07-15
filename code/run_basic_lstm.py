@@ -1,6 +1,7 @@
 from imports import *
 from preprocess import *
 from model import *
+from bidirectional_lstm_mod import *
 dat = pd.read_csv("../input/train.csv")
 
 
@@ -28,7 +29,7 @@ X_train_padded = pad_sequences(X_train_indices, maxlen=200, truncating='post')
 
 maxLen = 200
 # define model
-model = basic_lstm((maxLen,), word_to_vec_map, word_to_index)
+model = birectional_lstm((maxLen,), word_to_vec_map, word_to_index,trainable=True)
 
 model.summary()
 
@@ -36,7 +37,7 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 
 
 
-model.fit(X_train_padded, y_train, epochs = 2, batch_size = 32, shuffle=True)
+model.fit(X_train_padded, y_train, epochs=1, batch_size = 32, shuffle=True)
 
 
 #training on entire training set takes too long for quick

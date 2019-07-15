@@ -1,18 +1,17 @@
 from imports import *
 from helper_functions import *
 
-def data_process(datafile, text_col):
+def data_process(dataframe, text_col):
     """
     removes punctuation, tokenizes from a
     pandas dataframe
 
     PARAMS
     ---------------------------
-    dat: pd dataframe 
+    dat: pd dataframe
     """
-    dat = pd.read_csv(datafile)
-    dat[text_col] = dat[text_col].apply(lamda x: text_to_word_sequence(x))
-    return dat
+    dataframe[text_col] = dataframe[text_col].apply(lambda x: text_to_word_sequence(x))
+    return dataframe
 
 def get_indices(X, word_to_index, maxlen):
     """

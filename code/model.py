@@ -17,9 +17,9 @@ def basic_lstm(input_shape, word_to_vec_map, word_to_index, trainable=False):
     embeddings = embedding_layer(sentence_indices)
 
     X = LSTM(128,  return_sequences=True)(embeddings)
-    X = Dropout(.5)(X)
+    X = Dropout(.1)(X)
     X = LSTM(128)(X)
-    X = Dropout(.5)(X)
+    X = Dropout(.1)(X)
     X = Dense(6, activation='sigmoid')(X)
     model = Model(inputs=sentence_indices, outputs=X)
 

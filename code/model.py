@@ -1,7 +1,7 @@
 from imports import *
 from preprocess import *
 
-def basic_lstm(input_shape, word_to_vec_map, word_to_index):
+def basic_lstm(input_shape, word_to_vec_map, word_to_index, trainable=False):
     """
     creates the lstm graph using keras
 
@@ -13,7 +13,7 @@ def basic_lstm(input_shape, word_to_vec_map, word_to_index):
     """
 
     sentence_indices = Input(shape=input_shape, dtype='int32')
-    embedding_layer = pretrained_embedding_layer(word_to_vec_map, word_to_index)
+    embedding_layer = pretrained_embedding_layer(word_to_vec_map, word_to_index, trainable=trainable)
     embeddings = embedding_layer(sentence_indices)
 
     X = LSTM(128,  return_sequences=True)(embeddings)

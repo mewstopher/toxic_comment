@@ -1,7 +1,7 @@
 from imports import *
 from preprocess import *
 
-def birectional_lstm(input_shape, word_to_vec_map, word_to_index, trainable=False):
+def bidirectional_lstm(input_shape, word_to_vec_map, word_to_index, trainable=False):
     """
     creates the lstm graph using keras
 

@@ -4,9 +4,10 @@ from model import *
 from bidirectional_lstm_mod import *
 import sys
 
-# read in data and glove embeddings
+# read in data and glove embeddings using 300d
 dat = pd.read_csv("../input/train.csv")
-glove_file = "../input/glove.6B.50d.txt"
+
+glove_file = "../input/glove.6B.300d.txt"
 word_to_index, index_to_word, word_to_vec_map = read_glove_vecs(glove_file)
 
 # process data 

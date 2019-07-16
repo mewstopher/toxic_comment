@@ -39,7 +39,21 @@ if __name__ == "__main__":
     if do_test == 'y':
         get_test_accuracy(X_test, y_test, model=model)
 
+# submit predictions to csv
+    to_save = input('save sumbittion: ')
+    if to_save == 'y':
+        test_dat = pd.read_csv("../input/test.csv")
+        dat = data_process(dat, 'comment_text')
+
+        X_te = dat['comment_text'].values
+        X_test_padded = get_indices(X_te, word_to_index, 200)
+        y_test = model.predict([X_test_padded], batch_size=1024, verbose=1)
+        sample_submission = pd.read_csv('../input/sample_submission.csv')
+        sample_submission[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']] = y_test
+        sample_submission.to_csv('../output/submission_X.csv', index=False)
+
     sys.exit()
+
 
 
 # fit model

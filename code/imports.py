@@ -10,3 +10,4 @@ from sklearn.model_selection import train_test_split
 from keras.preprocessing.text import text_to_word_sequence
 from keras.preprocessing.sequence import pad_sequences
 from keras.layers import Bidirectional, GlobalMaxPool1D
+from keras.models import load_model

@@ -26,10 +26,10 @@ X_train, X_test, y_train, y_test = train_test_split(X_padded, Y)
 if __name__ == "__main__":
     load_or_save = input("press l to load model, press t to train from scratch: ")
     train_obs = input("number of observations to use for testing(type 'a' for all): ")
-        if train_obs == 'a':
-            train_obs = X_train.shape[0]
-        else:
-            train_obs = int(train_obs)
+    if train_obs == 'a':
+        train_obs = X_train.shape[0]
+    else:
+        train_obs = int(train_obs)
     if load_or_save == 't':
         model = trial_lstm((200,), word_to_vec_map, word_to_index, trainable=True)
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])

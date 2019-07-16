@@ -29,7 +29,7 @@ if __name__ == "__main__":
         train_obs = X_train.shape[0]
     else:
         train_obs = int(train_obs)
-    model = bidirectional_lstm((200,), word_to_vec_map, word_to_index, trainable=True)
+    model = trial_lstm((200,), word_to_vec_map, word_to_index, trainable=True)
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.fit(X_train[0:train_obs], y_train[0:train_obs], epochs=1, batch_size=32, shuffle=True)
     do_save = input("save model? press y to save: ")
@@ -58,12 +58,12 @@ if __name__ == "__main__":
 
 # fit model
 # compile model
-model = basic_lstm((200,), word_to_vec_map, word_to_index, trainable=True)
+model = trial_lstm((200,), word_to_vec_map, word_to_index, trainable=True)
 model.summary()
 model.compile(loss="binary_crossentropy", optimizer='adam', metrics=['accuracy'])
 
 
-model.fit(X_train, y_train, epochs=1, batch_size=32, shuffle=True, validation_split=.1)
+model.fit(X_train[0:80], y_train[0:80], epochs=1, batch_size=32, shuffle=True, validation_split=.1)
 
 
 # get test set accuracy

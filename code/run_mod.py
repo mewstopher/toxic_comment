@@ -24,10 +24,15 @@ model = basic_lstm((200,), word_to_vec_map, word_to_index, trainable=True)
 model.summary()
 model.compile(loss="binary_crossentropy", optimizer='adam', metrics=['accuracy'])
 
-# fit model
-model.fit(X_train, y_train, epochs=1, batch_size=32, shuffle=True, validation_split=.1)
+if __name__ == "__main__":
+    train_obs = 10
+    model.fit(X_train[0:train_obs], y_train[0:train_obs], epochs=1, batch_size=32, shuffle=True)
+
+else:
+    # fit model
+    model.fit(X_train, y_train, epochs=1, batch_size=32, shuffle=True, validation_split=.1)
 
 
-# get test set accuracy
-get_test_accuracy(X_test, y_test)
+    # get test set accuracy
+    get_test_accuracy(X_test, y_test)
 

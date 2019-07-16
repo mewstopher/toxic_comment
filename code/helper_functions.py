@@ -66,7 +66,7 @@ def pretrained_embedding_layer(word_to_vec_map, word_to_index,trainable=False):
     return embedding_layer
 
 
-def get_test_accuracy(X_test, y_test):
+def get_test_accuracy(X_test, y_test, model):
     """
     uses trained model to get test accuracy
 

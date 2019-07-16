@@ -43,9 +43,9 @@ if __name__ == "__main__":
     to_save = input('save sumbittion: ')
     if to_save == 'y':
         test_dat = pd.read_csv("../input/test.csv")
-        dat = data_process(dat, 'comment_text')
+        test_dat = data_process(test_dat, 'comment_text')
 
-        X_te = dat['comment_text'].values
+        X_te = test_dat['comment_text'].values
         X_test_padded = get_indices(X_te, word_to_index, 200)
         y_test = model.predict([X_test_padded], batch_size=1024, verbose=1)
         sample_submission = pd.read_csv('../input/sample_submission.csv')

@@ -4,7 +4,7 @@ import os
 import time
 import gc
 import random
-from tqdm._tqdm_notebook import tqdm_notebook as tqdm
+#from tqdm._tqdm_notebook import tqdm_notebook as tqdm
 from keras.preprocessing import text, sequence
 import torch
 from torch import nn
@@ -105,7 +105,78 @@ class NeuralNet(nn.Module):
 
         return out
 
+def preprocess(data):
+    '''
+    Credit goes to https://www.kaggle.com/gpreda/jigsaw-fast-compact-solution
+    '''
+    punct = "/-'?!.,#$%\'()*+-/:;<=>@[\\]^_`{|}~`" + '""“”’' + '∞θ÷α•à−β∅³π‘₹´°£€\×™√²—–&'
+    def clean_special_chars(text, punct):
+        for p in punct:
+            text = text.replace(p, ' ')
+        return text
 
+    data = data.astype(str).apply(lambda x: clean_special_chars(x, punct))
+    return data
+
+train = pd.read_csv('../input/train.csv')
+test = pd.read_csv('../input/test.csv')
+
+x_train = preprocess(train['comment_text'])
+y_train = np.where(train['target'] >= 0.5, 1, 0)
+y_aux_train = train[['target', 'severe_toxicity', 'obscene', 'identity_attack', 'insult', 'threat']]
+x_test = preprocess(test['comment_text'])
+
+
+max_features = None
+
+
+
+tokenizer = text.Tokenizer()
+tokenizer.fit_on_texts(list(x_train) + list(x_test))
+
+x_train = tokenizer.texts_to_sequences(x_train)
+x_test = tokenizer.texts_to_sequences(x_test)
+x_train = sequence.pad_sequences(x_train, maxlen=MAX_LEN)
+x_test = sequence.pad_sequences(x_test, maxlen=MAX_LEN)
+
+
+max_features = max_features or len(tokenizer.word_index) + 1
+max_features
+
+crawl_matrix, unknown_words_crawl = build_matrix(tokenizer.word_index, CRAWL_EMBEDDING_PATH)
+print('n unknown words (crawl): ', len(unknown_words_crawl))
+
+glove_matrix, unknown_words_glove = build_matrix(tokenizer.word_index, GLOVE_EMBEDDING_PATH)
+print('n unknown words (glove): ', len(unknown_words_glove))
+
+embedding_matrix = np.concatenate([crawl_matrix, glove_matrix], axis=-1)
+embedding_matrix.shape
+
+del crawl_matrix
+del glove_matrix
+gc.collect()
+
+
+
+x_train_torch = torch.tensor(x_train, dtype=torch.long).cuda()
+x_test_torch = torch.tensor(x_test, dtype=torch.long).cuda()
+y_train_torch = torch.tensor(np.hstack([y_train[:, np.newaxis], y_aux_train]), dtype=torch.float32).cuda()
+train_dataset = data.TensorDataset(x_train_torch, y_train_torch)
+test_dataset = data.TensorDataset(x_test_torch)
+
+all_test_preds = []
+
+for model_idx in range(NUM_MODELS):
+    print('Model ', model_idx)
+    seed_everything(1234 + model_idx)
+
+    model = NeuralNet(embedding_matrix, y_aux_train.shape[-1])
+    model.cuda()
+
+    test_preds = train_model(model, train_dataset, test_dataset, output_dim=y_train_torch.shape[-1],
+                             loss_fn=nn.BCEWithLogitsLoss(reduction='mean'))
+    all_test_preds.append(test_preds)
+    print()
 def sigmoid(x):
         return 1 / (1 + np.exp(-x))
 
@@ -147,4 +218,5 @@ enable_checkpoint_ensemble=True):
     else:
     test_preds = all_test_preds[-1]
     return test_preds
+
 

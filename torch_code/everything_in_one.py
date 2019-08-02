@@ -23,7 +23,7 @@ def seed_everything(seed=1234):
     seed_everything()
 
 CRAWL_EMBEDDING_PATH = '../input/fasttext-crawl-300d-2m/crawl-300d-2M.vec'
-GLOVE_EMBEDDING_PATH = '../input/glove840b300dtxt/glove.840B.300d.txt'
+GLOVE_EMBEDDING_PATH = '../input/glove.6B.100d.txt'
 NUM_MODELS = 2
 LSTM_UNITS = 128
 DENSE_HIDDEN_UNITS = 4 * LSTM_UNITS
@@ -34,11 +34,11 @@ def get_coefs(word, *arr):
 
 def load_embeddings(path):
     with open(path) as f:
-        return dict(get_coefs(*line.strip().split(' ')) for line in tqdm(f))
+        return dict(get_coefs(*line.strip().split(' ')) for line in f)
 
 def build_matrix(word_index, path):
     embedding_index = load_embeddings(path)
-    embedding_matrix = np.zeros((len(word_index) + 1, 300))
+    embedding_matrix = np.zeros((len(word_index) + 1, 100))
     unknown_words = []
 
     for word, i in word_index.items():
@@ -122,8 +122,8 @@ train = pd.read_csv('../input/train.csv')
 test = pd.read_csv('../input/test.csv')
 
 x_train = preprocess(train['comment_text'])
-y_train = np.where(train['target'] >= 0.5, 1, 0)
-y_aux_train = train[['target', 'severe_toxicity', 'obscene', 'identity_attack', 'insult', 'threat']]
+y_train = train[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']]
+#y_aux_train = train[['target', 'severe_toxicity', 'obscene', 'identity_attack', 'insult', 'threat']]
 x_test = preprocess(test['comment_text'])
 
 

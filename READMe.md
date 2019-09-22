@@ -4,6 +4,17 @@ This is use case of LSTMs on sentement analysis. The dataset is a bunch of comme
 We will start using a simple 2-layer lstm and then experiment with different model 
 architectures.
 
+## USER GUIDE
+---------------------
+1. Go to the Input directory and run:
+```
+bash download.sh
+```
+This will download glove embeddings into the data/glove_embeddings/Embeddings dir
+
+2. Download Data files from: https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data
+Then place unziped datafiles into data dir
+
 ## Files
 There are 4 main files being used.
 1. preprocess: contains functions for handling preproceccing of data

@@ -39,7 +39,7 @@ if __name__ == "__main__":
         print(os.listdir("../output/"))
         model_to_load = input("type in model name to load: ")
         model = load_model("../output/" + model_to_load)
-        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']) 
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         model.fit(X_train[0:train_obs], y_train[0:train_obs], epochs=1, batch_size=32, shuffle=True)
     do_save = input("save model? press y to save: ")
     if do_save == 'y':

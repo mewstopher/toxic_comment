@@ -1,5 +1,4 @@
-/input/datasets/
-/input/glove_embeddings/
+/input/
 lab_notes.txt
 /code/__pycache__
 /output

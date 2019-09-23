@@ -7,6 +7,6 @@ from torch.utils import data
 from torch.nn import functional as F
 from torch import autograd
 import sys
-sys.append("../../")
+sys.path.append("../../")
 import matplotlib as plt
 import os

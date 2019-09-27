@@ -1,7 +1,7 @@
 from imports import *
 from torch.utils.data import Dataset
 
-class ToxicDataset(dataset):
+class ToxicDataset(Dataset):
     """
     class for toxic comment dataset
     """
@@ -9,8 +9,12 @@ class ToxicDataset(dataset):
         self.df = pd.read_csv(toxic_csv_path)
         self.vocab_path = os.path.join(os.path.dirname(toxic_csv_path), "vocab.npy")
         self.vocab_vectors_path = os.path.join(os.path.dirname(toxic_csv_path), "vocab_vectors.npy")
+        print('reading glove vecs')
         word_to_index, index_to_word, word_to_vec_map = self._read_glove_vecs(glove_path)
+        print('finished reading glove vecs')
         self.emb_dim = np.int(self.word_to_vec_map['fox'].shape[0])
+        self._build_vocab()
+        self.max_text_len = len(max(self.df.comment_text))
 
     def _build_vocab(self):
         if os.path.isfile(self.vocab_path) and os.path.isfile(self.vocab_vectors_path):
@@ -28,7 +32,7 @@ class ToxicDataset(dataset):
         for word in words_in_sample:
             if word not in self.vocab:
                 self.vocab[word] = token_count
-                embeddings.append(._vec(word))
+                embeddings.append(self._vec(word))
             else:
                 if not unk_encountered:
                     embeddings.append(self._vec('unk'))
@@ -58,6 +62,8 @@ class ToxicDataset(dataset):
         word_to_index, index_to_word, word_to_vec_map
         """
         with open(glove_path, 'r') as f:
+            words = set()
+            word_to_vec_map = {}
             for line in f:
                 line = line.strip().split()
                 curr_word = line[0]
@@ -93,29 +99,7 @@ class ToxicDataset(dataset):
         text_padded = F.pad(text_indices, (0, self.max_text_len - text_len), value=0, mode='constant')
         return text_indices_padded, labels
 
+dd = ToxicDataset("../input/datasets/train.csv", "../../../Data/Embeddings/glove.6B.50d.txt")
 
-def _rread_glove_vecs(glove_path):
-    """
-    read in glove embeddings
-    output 3 dictionaries:
-    word_to_index, index_to_word, word_to_vec_map
-    """
-    with open(glove_path, 'r') as f:
-        words = set()
-        word_to_vec_map = {}
-        for line in f:
-            line = line.strip().split()
-            curr_word = line[0]
-            words.add(curr_word)
-            word_to_vec_map[curr_word] = np.array(line[1:], dtype=np.float64)
-            i = 1
-            word_to_index = {}
-            index_to_word = {}
-            for w in sorted(words):
-                word_to_index[w] = i
-                index_to_word[i] = w
-                i += 1
-    return word_to_index, index_to_word, word_to_vec_map
-
-xx = _rread_glove_vecs("../input/glove_embeddings/Embeddings/glove.6B.50d.txt")
+xx = pd.read_csv("../input/datasets/train.csv")
 

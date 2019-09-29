@@ -4,6 +4,7 @@ from string import punctuation
 from sklearn.model_selection import train_test_split
 import torch
 from torch.utils import data
+from torch import nn
 from torch.nn import functional as F
 from torch import autograd
 import sys

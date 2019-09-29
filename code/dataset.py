@@ -9,9 +9,7 @@ class ToxicDataset(Dataset):
         self.df = pd.read_csv(toxic_csv_path)
         self.vocab_path = os.path.join(os.path.dirname(toxic_csv_path), "vocab.npy")
         self.vocab_vectors_path = os.path.join(os.path.dirname(toxic_csv_path), "vocab_vectors.npy")
-        print('reading glove vecs')
-        word_to_index, index_to_word, word_to_vec_map = self._read_glove_vecs(glove_path)
-        print('finished reading glove vecs')
+        self.word_to_index, self.index_to_word, self.word_to_vec_map = self._read_glove_vecs(glove_path)
         self.emb_dim = np.int(self.word_to_vec_map['fox'].shape[0])
         self._build_vocab()
         self.max_text_len = len(max(self.df.comment_text))
@@ -22,36 +20,46 @@ class ToxicDataset(Dataset):
             self.vocab = np.load(self.vocab_path, allow_pickle=True).item()
             self.initial_embeddings = np.load(self.vocab_vectors_path, allow_pickle=True).item
             self.unk_index = self.vocab['unk']
-        print("creating vocab... this may take a few min")
-        embeddings = []
-        self.vocab = {}
-        embeddings.append(np.zeros(self.emb_dim,))
-        token_count = 0
-        list_of_texts = self._tokenize_content('comment_text')
-        words_in_sample = [text for comments in list_of_texts for text in comments]
-        for word in words_in_sample:
-            if word not in self.vocab:
-                self.vocab[word] = token_count
-                embeddings.append(self._vec(word))
-            else:
-                if not unk_encountered:
-                    embeddings.append(self._vec('unk'))
-                    self.unk_index = token_count
-                    self.unk_encountered = True
-                    token_count +=1
+        else:
+            print("creating vocab... this may take a few min")
+            embeddings = []
+            self.vocab = {}
+            self.unkown_words = []
+            unk_encountered = False
+            embeddings.append(np.zeros(self.emb_dim,))
+            token_count = 0
+            list_of_texts = self._tokenize_content('comment_text')
+            words_in_sample = [text for comments in list_of_texts for text in comments]
+            for word in words_in_sample:
+                if word not in self.vocab:
+                    self.vocab[word] = token_count
+                    if self._vec(word) != 'unkown word':
+                        embeddings.append(self._vec(word))
+                else:
+                    if not unk_encountered:
+                        embeddings.append(self._vec('unk'))
+                        self.unk_index = token_count
+                        self.unk_encountered = True
+                        token_count +=1
+                    self.vocab[word] = self.unk_index
+            if not unk_encountered:
+                embeddings.append(self._vec('unk'))
+                self.unk_index = token_count
+                self.unk_encountered = True
+                token_count +=1
                 self.vocab[word] = self.unk_index
-        if not unk_encountered:
-            embeddings.append(self._vec('unk'))
-            self.unk_index = token_count
-            self.unk_encountered = True
-            token_count +=1
-            self.vocab[word] = self.unk_index
             self.initial_embeddings = np.array(embeddings)
             np.save(self.vocab_path, self.vocab)
             np.save(self.vocab_vectors_path, self.initial_embeddings)
 
     def _vec(self, w):
-        return self.word_to_vec_map[w]
+        try:
+            word_as_vec = self.word_to_vec_map[w]
+        except:
+           self.unkown_words.append(w)
+           word_as_vec = "unkown word"
+        return word_as_vec
+
 
 
 
@@ -69,17 +77,17 @@ class ToxicDataset(Dataset):
                 curr_word = line[0]
                 words.add(curr_word)
                 word_to_vec_map[curr_word] = np.array(line[1:], dtype=np.float64)
-                i = 1
-                word_to_index = {}
-                index_to_word = {}
-                for w in sorted(words):
-                    word_to_index[w] = i
-                    index_to_word[i] = w
-                    i += 1
+            i = 1
+            word_to_index = {}
+            index_to_word = {}
+            for w in sorted(words):
+                word_to_index[w] = i
+                index_to_word[i] = w
+                i += 1
         return word_to_index, index_to_word, word_to_vec_map
 
     def _tokenize_content(self, text_col):
-        text_tokenized = self.df[text_col].astype(str).apply(lambda x: self.clean_special_char(x).split())
+        text_tokenized = self.df[text_col].astype(str).apply(lambda x: self.clean_special_char(x).lower().split())
         return text_tokenized
 
     def clean_special_char(self, text):
@@ -99,7 +107,4 @@ class ToxicDataset(Dataset):
         text_padded = F.pad(text_indices, (0, self.max_text_len - text_len), value=0, mode='constant')
         return text_indices_padded, labels
 
-dd = ToxicDataset("../input/datasets/train.csv", "../../../Data/Embeddings/glove.6B.50d.txt")
-
-xx = pd.read_csv("../input/datasets/train.csv")
 

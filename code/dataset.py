@@ -89,6 +89,10 @@ class ToxicDataset(Dataset):
     def _tokenize_content(self, text_col):
         text_tokenized = self.df[text_col].astype(str).apply(lambda x: self.clean_special_char(x).lower().split())
         return text_tokenized
+    
+    def _tokenize_sample(self, content):
+        sample_tokenized = self.clean_special_char(content).lower().split()
+        return sample_tokenized
 
     def clean_special_char(self, text):
         punc = "/-'?!.,#$%\'()*+-/:;<=>@[\\]^_`{|}~`" + '""“”’' + '∞θ÷α•à−β∅³π‘₹´°£€\×™√²—–&'
@@ -101,10 +105,11 @@ class ToxicDataset(Dataset):
 
     def __getitem__(self, idx):
         sample_data = self.df.iloc[idx]
-        text_tokenized = self._tokenize_content('comment_text')
-        text_indices = [self.vocab.get(i, self.unk_index) for i in text_tokenized]
+        text_tokenized = self._tokenize_sample(sample_data['comment_text'])
+        text_indices = torch.tensor([self.vocab.get(i, self.unk_index) for i in text_tokenized],dtype=torch.long)
         text_len = len(text_indices)
         text_padded = F.pad(text_indices, (0, self.max_text_len - text_len), value=0, mode='constant')
-        return text_indices_padded, labels
+        labels = sample_data['toxic']
+        return text_padded, labels
 
 

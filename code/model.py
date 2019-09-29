@@ -18,7 +18,7 @@ class LstmNet(nn.Module):
         self.dense1_dropout = nn.Dropout(0.5)
         self.dense_2 = nn.Linear(64, 64)
         self.dense2_dropout = nn.Dropout(0.5)
-        self.output = nn.Linear(64,1)
+        self.output = nn.Linear(64,6)
 
     def init_hidden(self, batch_size):
         """
@@ -44,7 +44,7 @@ class LstmNet(nn.Module):
         X = self.dense1_dropout(X)
         X = self.dense_2(X)
         X = self.dense2_dropout(X)
-        X = F.sigmoid(self.output(X))
+        X = F.softmax(self.output(X))
         return X
 
 

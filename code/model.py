@@ -7,16 +7,16 @@ class LstmNet(nn.Module):
     def __init__(self, glove_embeddings, num_lstm_units, device, frozen=True):
         super(LstmNet, self).__init__()
         self.device = device
-        self.embeddings = nn.Embeddings.from_pretrained(torch.from_numpy(
-            glove_embeddings, freeze=frozen))
+        self.embeddings = nn.Embedding.from_pretrained(torch.from_numpy(
+            glove_embeddings), freeze=True)
         self.num_lstm_units = num_lstm_units
-        self.embeddings_dim = embeddings.shape[1]
+        self.embeddings_dim = glove_embeddings.shape[1]
         self.bilstm = nn.LSTM(input_size=self.embeddings_dim,
                               hidden_size=self.num_lstm_units,
                               batch_first=True, bidirectional=True)
-        self.dense_1 = nn.Linear(128, 128)
+        self.dense_1 = nn.Linear(800, 128)
         self.dense1_dropout = nn.Dropout(0.5)
-        self.dense_2 = nn.Linear(64, 64)
+        self.dense_2 = nn.Linear(128, 64)
         self.dense2_dropout = nn.Dropout(0.5)
         self.output = nn.Linear(64,6)
 
@@ -38,14 +38,18 @@ class LstmNet(nn.Module):
         """
         batch_size = x.shape[0]
         self.hidden = self.init_hidden(batch_size)
-        X = self.embeddings(X).float()
+        X = self.embeddings(x).float()
         X, self.hidden = self.bilstm(X, self.hidden)
-        X = self.dense_1(X)
+        X1 = torch.mean(X, 1)
+        X2,_ = torch.max(X, 1)
+        X = torch.cat((X1, X2),1)
+        X = F.relu(self.dense_1(X))
         X = self.dense1_dropout(X)
-        X = self.dense_2(X)
+        X = F.relu(self.dense_2(X))
         X = self.dense2_dropout(X)
         X = F.softmax(self.output(X))
         return X
+
 
 
 

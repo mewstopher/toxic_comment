@@ -18,7 +18,7 @@ class ToxicDataset(Dataset):
         if os.path.isfile(self.vocab_path) and os.path.isfile(self.vocab_vectors_path):
             print('using pre-built vocab')
             self.vocab = np.load(self.vocab_path, allow_pickle=True).item()
-            self.initial_embeddings = np.load(self.vocab_vectors_path, allow_pickle=True).item
+            self.initial_embeddings = np.load(self.vocab_vectors_path, allow_pickle=True)
             self.unk_index = self.vocab['unk']
         else:
             print("creating vocab... this may take a few min")
@@ -108,9 +108,8 @@ class ToxicDataset(Dataset):
         text_tokenized = self._tokenize_sample(sample_data['comment_text'])
         text_indices = torch.tensor([self.vocab.get(i, self.unk_index) for i in text_tokenized],dtype=torch.long)
         text_len = len(text_indices)
-        labels = torch.tensor(np.array(xx[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']]), dtype=torch.float32)
+        labels = torch.tensor(sample_data[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']].values.astype(float), dtype=torch.float32)
         text_padded = F.pad(text_indices, (0, self.max_text_len - text_len), value=0, mode='constant')
-        labels = torch.tensor(sample_data[['toxic']])
         return text_padded, labels
 
 

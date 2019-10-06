@@ -48,7 +48,7 @@ class LstmNet(nn.Module):
         X = self.dense1_dropout(X)
         X = F.relu(self.dense_2(X))
         X = self.dense2_dropout(X)
-        X = F.softmax(self.output(X))
+        X = F.sigmoid(self.output(X))
         return X
 
 

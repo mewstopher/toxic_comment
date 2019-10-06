@@ -51,7 +51,7 @@ for epoch in range(num_epochs):
         print(loss.data)
         losses[epoch].append(loss.data)
 
-
+    accuracy_score(lables, preds>.5)
 snopes_eval =ToxicEvaluation(declare, test_dataloader, device)
 labels, preds = snopes_eval.claim_wise_accuracies()
 

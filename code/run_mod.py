@@ -33,16 +33,16 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 BCELoss = nn.BCELoss()
 losses = {}
 num_epochs = 1
-
+count = 0
 
 
 for epoch in range(num_epochs):
     losses[epoch] = []
     for data_sample in train_dataloader:
         for i in range(len(data_sample)):
-            idx = np.argsort(-sample_data[0])
-            sample_data[i] = sample_data[i][idx].to(device)
+            data_sample[i] = data_sample[i].to(device)
 
+        count += 1
         model.zero_grad()
 
 
@@ -53,7 +53,8 @@ for epoch in range(num_epochs):
         optimizer.step()
         print(loss.data)
         losses[epoch].append(loss.data)
-
+        if count == 1:
+            torch.save(model.state_dict(), '../output/mdoel' + str(datetime.today()).split[0])
 #    accuracy_score(lables, preds>.5)
 
 #    torch.save(model.state_dict(), ../output/'model' + datetime.now().date())

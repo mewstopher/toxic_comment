@@ -3,22 +3,22 @@ import numpy as np
 
 class ToxicEvaluation(object):
 
-    def __init__(self, model, test_dataloader, device=device):
+    def __init__(self, model, dataloader, device):
         self.model = model
         self.dataloader = test_dataloader
         self.device = device
 
-        self.test_data, self.predictions = self._predict_test()
+        self.predicted, self.accuracy = self._predict_val()
 
-    def _predict_test(self):
+    def _predict_val(self):
         with torch.no_grad():
-            dataiter = iter(self.dataloader)
-            data_sample = dataiter.next()
-
-            for i in range(len(data_sample)):
-                data_sample[i] = data_sample[i].to(self.device)
-
-            out = self.model(data_sample[0])
-
-        return data_sample, out
+            for data in self.dataloader:
+                for i in range(len(data)):
+                    data[i] = data[i].to(self.device)
+                input_data, labels = data
+                val_out = model(input_data)
+                _, predicted = torch.max(val_out.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+        return predicted, correct/total
 

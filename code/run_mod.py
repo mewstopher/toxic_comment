@@ -1,7 +1,7 @@
 from imports import *
 from dataset import ToxicDataset
 from model import LstmNet
-
+from metrics.eval import ToxicEvaluation
 # define Paths to datafile and embeddings
 TOXIC_CSV_PATH = "../input/datasets/train.csv"
 GLOVE_PATH = "../input/glove_embeddings/Embeddings/glove.6B.50d.txt"
@@ -39,6 +39,9 @@ num_epochs = 1
 for epoch in range(num_epochs):
     losses[epoch] = []
     for data_sample in train_dataloader:
+        for i in range(len(data_sample)):
+            idx = np.argsort(-sample_data[0])
+            sample_data[i] = sample_data[i][idx].to(device)
 
         model.zero_grad()
 
@@ -51,11 +54,29 @@ for epoch in range(num_epochs):
         print(loss.data)
         losses[epoch].append(loss.data)
 
-    accuracy_score(lables, preds>.5)
-snopes_eval =ToxicEvaluation(declare, test_dataloader, device)
+#    accuracy_score(lables, preds>.5)
+
+#    torch.save(model.state_dict(), ../output/'model' + datetime.now().date())
+toxic_eval =ToxicEvaluation(model, val_dataloader, device)
 labels, preds = snopes_eval.claim_wise_accuracies()
 
+val_outputs = model(data)
+_, predicted = torch.max(outputs, 1)
+correct = 0
+total = 0
+with torch.no_grad():
+    for data in testloader:
+        images, labels = data
+        outputs = net(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
 
+print('Accuracy of the network on the 10000 test images: %d %%' % (
+100 * correct / total))
+
+dataiter = iter(val_dataloader)
+data, labels = dataiter.next()
 true_claim_indices = np.where(labels==1)
 false_claim_indices = np.where(labels==0)
 accuracy_score(labels[true_claim_indices], preds[true_claim_indices]>0.5)

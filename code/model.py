@@ -19,6 +19,7 @@ class LstmNet(nn.Module):
         self.dense_2 = nn.Linear(128, 64)
         self.dense2_dropout = nn.Dropout(0.5)
         self.output = nn.Linear(64,6)
+        self.to(device)
 
     def init_hidden(self, batch_size):
         """

@@ -22,8 +22,8 @@ train_sampler, val_sampler, test_sampler = train_test_sampler(toxic_dataset, .8,
 # Creating PT data samplers and loaders:
 
 train_dataloader = DataLoader(toxic_dataset, batch_size, sampler=train_sampler)
-val_dataloader = DataLoader(toxic_dataset, len(val_sampler.indices), sampler=val_sampler)
-test_dataloader = DataLoader(toxic_dataset, len(test_sampler.indices), sampler=test_sampler)
+val_dataloader = DataLoader(toxic_dataset, 128, sampler=val_sampler)
+test_dataloader = DataLoader(toxic_dataset, 128, sampler=test_sampler)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

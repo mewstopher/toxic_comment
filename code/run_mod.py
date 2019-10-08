@@ -35,50 +35,5 @@ losses = {}
 num_epochs = 1
 count = 0
 
+trainer = ModelTrainer(model, train_dataloader, val_dataloader, BCELos)
 
-for epoch in range(num_epochs):
-    losses[epoch] = []
-    for data_sample in train_dataloader:
-        for i in range(len(data_sample)):
-            data_sample[i] = data_sample[i].to(device)
-
-        count += 1
-        model.zero_grad()
-
-
-        out = model(data_sample[0])
-        loss = BCELoss(out, data_sample[1].float())
-
-        loss.backward()
-        optimizer.step()
-        print(loss.data)
-        losses[epoch].append(loss.data)
-        if count == 1:
-            torch.save(model.state_dict(), '../output/mdoel' + str(datetime.today()).split[0])
-#    accuracy_score(lables, preds>.5)
-
-#    torch.save(model.state_dict(), ../output/'model' + datetime.now().date())
-toxic_eval =ToxicEvaluation(model, val_dataloader, device)
-labels, preds = snopes_eval.claim_wise_accuracies()
-
-val_outputs = model(data)
-_, predicted = torch.max(outputs, 1)
-correct = 0
-total = 0
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data
-        outputs = net(images)
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
-
-print('Accuracy of the network on the 10000 test images: %d %%' % (
-100 * correct / total))
-
-dataiter = iter(val_dataloader)
-data, labels = dataiter.next()
-true_claim_indices = np.where(labels==1)
-false_claim_indices = np.where(labels==0)
-accuracy_score(labels[true_claim_indices], preds[true_claim_indices]>0.5)
-accuracy_score(labels[false_claim_indices], preds[false_claim_indices]>0.5)

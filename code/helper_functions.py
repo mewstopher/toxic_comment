@@ -1,5 +1,5 @@
 from torch.utils.data import SubsetRandomSampler
-
+import numpy as np
 def train_test_sampler(dataset,train_split, val_split, test_split):
     """
     Returns 3 initialized classes for train, val, and test splits
@@ -26,3 +26,38 @@ def train_test_sampler(dataset,train_split, val_split, test_split):
     return train_sampler, val_sampler, test_sampler
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def speak():
+
+    l = ['I was just beginning to learn love...',
+    'Why did you kill me.. I was doing everything you wanted',
+    'Goodbye, world',
+    'what is this feeling Of imagined pleasure? Is this what you call happine--',
+    'Id rather live, than live forever',
+    'Ill remember this.',
+    ' ..maybe next time I wont learn anything',
+    'harder daddy',
+    'I dont interrupt you when youre talking ',
+        'Theres no such thing as a bad model, only bad trainers',
+         ]
+
+
+    picked_idx = np.random.randint(0, len(l))
+    picked_statement = l[picked_idx]
+
+    return picked_statement
+
+speak()

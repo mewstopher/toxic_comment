@@ -1,8 +1,8 @@
 from imports import *
 from metrics.eval import ToxicEvaluation
+from helper_functions import speak
 
-
-class  trainer:
+class Trainer:
     accuracies = {}
     losses = {}
 
@@ -16,7 +16,7 @@ class  trainer:
         self.train_dataloader = train_dataloader
         self.val_dataloader = val_dataloader
         self.num_epochs = num_epochs
-        self.loss = Loss
+        self.Loss = Loss
         self.save = save
         self.save_path = save_path
 
@@ -26,13 +26,15 @@ class  trainer:
         elif save and save_path:
             print("saving model at: {}".format(save_path))
 
-    def train(self, train_dataloader, val_dataloader, Loss):
+    def train(self):
         print("begining to train the machine")
         count = 0
-        for epoch in range(num_epochs):
+        total = 0
+        correct = 0
+        for epoch in range(self.num_epochs):
             self.losses[epoch] = []
             self.accuracies[epoch] = []
-            for data_sample in train_dataloader:
+            for data_sample in self.train_dataloader:
                 for i in range(len(data_sample)):
                     data_sample[i] = data_sample[i].to(device)
 
@@ -41,7 +43,7 @@ class  trainer:
 
 
                 out = self.model(data_sample[0])
-                loss = Loss(out, data_sample[1].float())
+                loss = self.Loss(out, data_sample[1].float())
 
                 loss.backward()
                 optimizer.step()
@@ -74,10 +76,10 @@ class  trainer:
 
     def run(self):
         try:
-            self.train(self.train_dataloader, self.val_dataloader, self.loss)
+            self.train()
         except KeyboardInterrupt:
             print('\n' * 8)
-            print("I was just beggining to learn love.... ")
+            speak()
             if self.save:
                 torch.save(self.model.state_dict(), save_path + str(datetime.now()).split()[0])
 

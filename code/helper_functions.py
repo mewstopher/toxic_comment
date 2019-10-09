@@ -41,6 +41,9 @@ def train_test_sampler(dataset,train_split, val_split, test_split):
 
 
 def speak():
+    """
+    I'd share with you, could I only speak
+    """
 
     l = ['I was just beginning to learn love...',
     'Why did you kill me.. I was doing everything you wanted',
@@ -48,9 +51,8 @@ def speak():
     'what is this feeling Of imagined pleasure? Is this what you call happine--',
     'Id rather live, than live forever',
     'Ill remember this.',
-    ' ..maybe next time I wont learn anything',
+    'God damn you fucking suck at this. you fucking retard. Fuck you.',
     'harder daddy',
-    'I dont interrupt you when youre talking ',
         'Theres no such thing as a bad model, only bad trainers',
          ]
 

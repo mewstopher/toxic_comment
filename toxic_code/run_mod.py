@@ -2,12 +2,16 @@ from imports import *
 from dataset import ToxicDataset
 from model import LstmNet
 from metrics.eval import ToxicEvaluation
+import sys
+from toxic_code.train_mod import Trainer
+from torch import nn
 # define Paths to datafile and embeddings
-TOXIC_CSV_PATH = "../input/datasets/train.csv"
-GLOVE_PATH = "../input/glove_embeddings/Embeddings/glove.6B.50d.txt"
-
+TOXIC_CSV_PATH = "../../toxic_sentiment/data/toxic_data/train.csv"
+GLOVE_PATH = "../../throwaway/Embeddings/glove.6B.50d.txt"
+TOXIC_VOCAB_PATH = "../../toxic_sentiment/data/vocab/vocab.npy"
+TOXIC_EMB_PATH = "../../toxic_sentiment/data/vocab/embedding.npy"
 # Initialize Dataset class
-toxic_dataset = ToxicDataset(TOXIC_CSV_PATH, GLOVE_PATH)
+toxic_dataset = ToxicDataset(TOXIC_CSV_PATH, GLOVE_PATH, TOXIC_VOCAB_PATH, TOXIC_EMB_PATH)
 
 batch_size = 64
 nb_lstm_units = 64
@@ -35,5 +39,7 @@ losses = {}
 num_epochs = 1
 count = 0
 
-trainer = ModelTrainer(model, train_dataloader, val_dataloader, BCELos)
-
+trainer = Trainer(model, train_dataloader, val_dataloader, 3, BCELoss)
+trainer.run()
+if __name__ == '__main__':
+    sys.exit(main())

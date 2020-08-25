@@ -5,10 +5,10 @@ class ToxicDataset(Dataset):
     """
     class for toxic comment dataset
     """
-    def __init__(self, toxic_csv_path, glove_path):
+    def __init__(self, toxic_csv_path, glove_path, vocab_path, embedding_path):
         self.df = pd.read_csv(toxic_csv_path)
-        self.vocab_path = os.path.join(os.path.dirname(toxic_csv_path), "vocab.npy")
-        self.vocab_vectors_path = os.path.join(os.path.dirname(toxic_csv_path), "vocab_vectors.npy")
+        self.vocab_path = vocab_path
+        self.vocab_vectors_path = embedding_path
         self.word_to_index, self.index_to_word, self.word_to_vec_map = self._read_glove_vecs(glove_path)
         self.emb_dim = np.int(self.word_to_vec_map['fox'].shape[0])
         self._build_vocab()

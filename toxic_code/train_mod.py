@@ -19,6 +19,7 @@ class Trainer:
         self.Loss = Loss
         self.save = save
         self.save_path = save_path
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     def save_choice(self, save, save_path):
         if not save:
@@ -36,7 +37,7 @@ class Trainer:
             self.accuracies[epoch] = []
             for data_sample in self.train_dataloader:
                 for i in range(len(data_sample)):
-                    data_sample[i] = data_sample[i].to(device)
+                    data_sample[i] = data_sample[i].to(self.device)
 
                 count += 1
                 model.zero_grad()
